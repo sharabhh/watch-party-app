@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import ReactPlayer from "react-player";
 
 function App() {
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -15,6 +16,9 @@ function App() {
           <Input type="text" placeholder="Enter Youtube url" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
           <Button>Start 🎉</Button>
         </div>
+        {youtubeUrl && (
+          <ReactPlayer src={youtubeUrl} />
+        )}
       </div>
     </>
   );
