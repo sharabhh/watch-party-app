@@ -5,6 +5,7 @@ import { createServer } from 'http';
 // const app = express();
 const httpServer = createServer();
 const connectedUser = new Set();
+ let youtubeUrl = null;
 const io = new Server(httpServer, {
     cors: {
         origin: 'http://localhost:5173',
@@ -18,6 +19,8 @@ io.on('connection', (socket) => {
     connectedUser.add(socket.id);
     console.log('a user connected', socket.id);
 
+
+
     io.emit('users', Array.from(connectedUser));
     socket.on('disconnect', () => {
         connectedUser.delete(socket.id);
@@ -26,6 +29,17 @@ io.on('connection', (socket) => {
     socket.on('message', (message) => {
         console.log('message', message);
     });
+    
+    socket.on('youtube-url', (url) => {
+        console.log('Received YouTube URL:', url);
+        youtubeUrl = url;
+        // Broadcast the YouTube URL to all connected clients
+        io.emit('youtube-url', url);
+    });
+
+    if (youtubeUrl) {
+        io.emit('youtube-url', youtubeUrl);
+    }
 });
 
 httpServer.listen(3000, () => {
