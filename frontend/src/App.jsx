@@ -11,12 +11,24 @@ function App() {
   const [connectedUsers, setConnectedUsers] = useState([]);
   console.log(youtubeUrl);
 
+  const handleStartWatchParty = () => {
+    if (youtubeUrl.trim()) {
+      socket.emit("youtube-url", youtubeUrl);
+      console.log("Sent YouTube URL to server:", youtubeUrl);
+    }
+  };
+
   useEffect(() => {
     socket.on("connect", () => {
       console.log("connected to server");
       socket.on("users", (users) => {
         console.log("users", users);
         setConnectedUsers(users);
+      });
+
+      socket.on("youtube-url", (url) => {
+        console.log("youtube-url received", url);
+        setYoutubeUrl(url);
       });
     });
   }, []);
@@ -34,7 +46,7 @@ function App() {
             value={youtubeUrl}
             onChange={(e) => setYoutubeUrl(e.target.value)}
           />
-          <Button>Start 🎉</Button>
+          <Button onClick={handleStartWatchParty}>Start 🎉</Button>
         </div>
         {youtubeUrl && <ReactPlayer src={youtubeUrl} />}
       </div>
