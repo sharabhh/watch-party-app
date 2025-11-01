@@ -18,14 +18,9 @@ const io = new Server(httpServer, {
 io.on('connection', (socket) => {
     connectedUser.add(socket.id);
     console.log('a user connected', socket.id);
-
-
+    
 
     io.emit('users', Array.from(connectedUser));
-    socket.on('disconnect', () => {
-        connectedUser.delete(socket.id);
-        console.log('a user disconnected', socket.id);
-    });
     socket.on('message', (message) => {
         console.log('message', message);
     });
@@ -34,7 +29,15 @@ io.on('connection', (socket) => {
         console.log('Received YouTube URL:', url);
         youtubeUrl = url;
         // Broadcast the YouTube URL to all connected clients
-        io.emit('youtube-url', url);
+        socket.broadcast.emit('youtube-url', url);
+    });
+
+    socket.on('disconnect', () => {
+        connectedUser.delete(socket.id);
+        console.log('User disconnected:', socket.id);
+        
+        // Update user count for remaining users
+        io.emit('users', Array.from(connectedUser));
     });
 
     if (youtubeUrl) {
