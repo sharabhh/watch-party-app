@@ -21,17 +21,26 @@ function App() {
   useEffect(() => {
     socket.on("connect", () => {
       console.log("connected to server");
-      socket.on("users", (users) => {
-        console.log("users", users);
-        setConnectedUsers(users);
-      });
-
-      socket.on("youtube-url", (url) => {
-        console.log("youtube-url received", url);
-        setYoutubeUrl(url);
-      });
     });
-  }, []);
+
+    socket.on("users", (users) => {
+      console.log("users", users);
+      setConnectedUsers(users);
+    });
+
+    socket.on("youtube-url", (url) => {
+      console.log("youtube-url received from server", url);
+      setYoutubeUrl(url);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("users");
+      socket.off("youtube-url");
+    };
+  }, [socket]);
+
+
 
   return (
     <>
